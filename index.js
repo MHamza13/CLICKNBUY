@@ -104,6 +104,8 @@ server.use("/auth", authRouter.router);
 server.use("/cart", isAuth(), cartRouter.router);
 server.use("/orders", isAuth(), ordersRouter.router);
 
+server.get("*", (req, res) => res.sendFile(path.resolve("dist", "index.htnl")));
+
 // Passport local strategy
 passport.use(
   "local",
