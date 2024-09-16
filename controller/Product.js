@@ -5,7 +5,7 @@ exports.createProduct = async (req, res) => {
   try {
     console.log("Request Body:", req.body);
 
-    const { products } = req.body; // Extract products from request body
+    const { products } = req.body;
 
     console.log("PRODUCTS:", products);
 
@@ -15,7 +15,6 @@ exports.createProduct = async (req, res) => {
         .json({ message: "Product data is required and must be an object." });
     }
 
-    // Check if required fields are present
     const requiredFields = [
       "title",
       "description",
@@ -30,7 +29,6 @@ exports.createProduct = async (req, res) => {
       }
     }
 
-    // Process image data if available
     const imageFields = ["thumbnail", "image1", "image2", "image3"];
     const imageResults = [];
     for (const field of imageFields) {
@@ -40,7 +38,6 @@ exports.createProduct = async (req, res) => {
         const mimeType = img.split(";")[0].split(":")[1];
         const imageBuffer = Buffer.from(base64Data, "base64");
 
-        // Create an image instance and save it
         const image = new Image({
           data: imageBuffer,
           contentType: mimeType,
@@ -53,10 +50,9 @@ exports.createProduct = async (req, res) => {
       }
     }
 
-    // Create and save the product with image references
     let product = new Product({
       ...products,
-      images: imageResults, // Save the image IDs
+      images: imageResults,
     });
     let result = await product.save();
 
@@ -71,39 +67,47 @@ exports.createProduct = async (req, res) => {
 
 exports.fetchAllProduct = async (req, res) => {
   let condition = {};
+
+  // Exclude deleted products if not admin
   if (!req.query.admin) {
     condition.deleted = { $ne: true };
   }
 
+  // Initialize query with condition
   let query = Product.find(condition);
   let totalProductsQuery = Product.find(condition);
 
+  // Apply category filter if provided
   if (req.query.category) {
-    query = query.find({ category: req.query.category });
-    totalProductsQuery = totalProductsQuery.find({
-      category: req.query.category,
-    });
-  }
-  if (req.query.brand) {
-    query = query.find({ brand: req.query.brand });
-    totalProductsQuery = totalProductsQuery.find({ brand: req.query.brand });
+    const categories = req.query.category.split(","); // Assuming multiple categories can be passed as a comma-separated list
+    query = query.where("category").in(categories);
+    totalProductsQuery = totalProductsQuery.where("category").in(categories);
   }
 
+  // Apply brand filter if provided
+  if (req.query.brand) {
+    const brands = req.query.brand.split(","); // Assuming multiple brands can be passed as a comma-separated list
+    query = query.where("brand").in(brands);
+    totalProductsQuery = totalProductsQuery.where("brand").in(brands);
+  }
+
+  // Apply sorting if provided
   if (req.query._sort && req.query._order) {
     query = query.sort({ [req.query._sort]: req.query._order });
   }
 
+  // Pagination
   const totalDocs = await totalProductsQuery.countDocuments().exec();
   if (req.query._page && req.query._limit) {
-    const pageSize = req.query._limit;
-    const page = req.query._page;
+    const pageSize = parseInt(req.query._limit, 10);
+    const page = parseInt(req.query._page, 10);
     query = query.skip(pageSize * (page - 1)).limit(pageSize);
   }
 
   try {
-    const doc = await query.exec();
+    const products = await query.exec();
     res.set("X-Total-Count", totalDocs);
-    res.status(200).json(doc);
+    res.status(200).json(products);
   } catch (err) {
     res.status(400).json(err);
   }

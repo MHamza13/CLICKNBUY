@@ -1,4 +1,5 @@
 const { Brand } = require("../modle/Brand");
+const { Image } = require("../modle/Image");
 
 exports.fetchBrands = async (req, res) => {
   try {
@@ -10,11 +11,36 @@ exports.fetchBrands = async (req, res) => {
 };
 
 exports.createBrand = async (req, res) => {
-  const brand = new Brand(req.body);
   try {
-    const doc = await brand.save();
-    res.status(201).json(doc);
+    console.log("Request Body:", req.body);
+
+    const { label, value, image } = req.body;
+
+    if (!label || !value || !image) {
+      return res
+        .status(400)
+        .json({ message: "Label, value, and image are required." });
+    }
+
+    if (!image.includes(";base64,")) {
+      return res.status(400).json({
+        message: "Invalid image format. Image should have ';base64,' prefix.",
+      });
+    }
+    // mens-shirts
+
+    const newBrand = new Brand({
+      label,
+      value,
+      image,
+    });
+
+    const result = await newBrand.save();
+    res.status(201).json(result);
   } catch (err) {
-    res.status(400).json(err);
+    console.error("Error creating category:", err);
+    res
+      .status(400)
+      .json({ message: "Failed to create category.", error: err.message });
   }
 };

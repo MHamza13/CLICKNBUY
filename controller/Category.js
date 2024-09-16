@@ -1,5 +1,6 @@
 const { Category } = require("../modle/Category");
 const { User } = require("../modle/User");
+const { Image } = require("../modle/Image");
 
 exports.fetchCategories = async (req, res) => {
   try {
@@ -13,11 +14,39 @@ exports.fetchCategories = async (req, res) => {
 };
 
 exports.createCategory = async (req, res) => {
-  const category = new Category(req.body);
   try {
-    const doc = await category.save();
-    res.status(201).json(doc);
+    console.log("Request Body:", req.body);
+
+    const { label, value, image } = req.body;
+
+    // Validate category fields
+    if (!label || !value || !image) {
+      return res
+        .status(400)
+        .json({ message: "Label, value, and image are required." });
+    }
+
+    // Validate base64 image format
+    if (!image.includes(";base64,")) {
+      return res.status(400).json({
+        message: "Invalid image format. Image should have ';base64,' prefix.",
+      });
+    }
+
+    // Create new category
+    const newCategory = new Category({
+      label,
+      value,
+      image, // Directly store base64-encoded image
+    });
+
+    // Save the new category
+    const result = await newCategory.save();
+    res.status(201).json(result);
   } catch (err) {
-    res.status(400).json(err);
+    console.error("Error creating category:", err);
+    res
+      .status(400)
+      .json({ message: "Failed to create category.", error: err.message });
   }
 };
