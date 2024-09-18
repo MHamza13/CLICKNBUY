@@ -43,10 +43,13 @@ exports.createUser = async (req, res) => {
 
 exports.loginUser = async (req, res) => {
   const user = req.user;
+  console.log("Setting JWT Cookie for user:", user); // Debugging
   res
-    .cookie("jwt", req.user, {
-      expires: new Date(Date.now() + 3600000),
+    .cookie("jwt", req.user.token, {
+      expires: new Date(Date.now() + 3600000), // 1 hour expiration
       httpOnly: true,
+      sameSite: "lax",
+      secure: process.env.NODE_ENV === "production",
     })
     .status(201)
     .json({ id: user.id, role: user.role });

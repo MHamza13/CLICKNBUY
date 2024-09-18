@@ -103,7 +103,7 @@ server.use("/users", isAuth(), userRouter.router);
 server.use("/auth", authRouter.router);
 server.use("/cart", isAuth(), cartRouter.router);
 server.use("/orders", isAuth(), ordersRouter.router);
-// server.get("*", (req, res) => res.sendFile(path.resolve("dist", "index.htnl")));
+server.get("*", (req, res) => res.sendFile(path.resolve("dist", "index.htnl")));
 
 // Passport local strategy
 passport.use(
@@ -133,7 +133,7 @@ passport.use(
             sanitizaUser(user),
             process.env.JWT_SECRET_KEY
           );
-          return done(null, { id: user.id, role: user.role }); // this line send to serializer
+          done(null, { id: user.id, role: user.role, token }); // this lines sends to serializer
         }
       );
     } catch (err) {
