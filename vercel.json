@@ -76,11 +76,11 @@
     },
     {
       "src": "/",
-      "dest": "build/index.html"
+      "dest": "dist/index.html"
     },
     {
       "src": "/(.+)",
-      "dest": "build/$1"
+      "dest": "dist/$1"
     }
   ]
 }
