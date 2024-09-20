@@ -62,3 +62,12 @@ exports.checkAuth = async (req, res) => {
     res.sendStatus(401);
   }
 };
+
+exports.getAllUsers = async (req, res) => {
+  try {
+    const users = await User.find({});
+    res.status(200).json(users);
+  } catch (err) {
+    res.status(400).json({ message: "Error fetching users", error: err });
+  }
+};
