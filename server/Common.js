@@ -12,7 +12,7 @@ exports.cookieExtractor = function (req) {
   var token = null;
   if (req && req.cookies) {
     token = req.cookies["jwt"];
-    console.log("Extracted JWT Token:", token); // Debugging to see if the token is being extracted
+    console.log("Extracted JWT Token:", token); 
   }
   return token;
 };
