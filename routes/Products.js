@@ -6,11 +6,13 @@ const {
   fetchAllProduct,
   fetchProductById,
   updateProduct,
+  Getproducts,
 } = require("../controller/Product");
 
 const router = express.Router();
 
 router
+  .get("/all", Getproducts)
   .post("/", createProduct)
   .get("/", fetchAllProduct)
   .get("/:id", fetchProductById)

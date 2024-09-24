@@ -1,6 +1,6 @@
 const express = require("express");
 require("dotenv").config();
-require("./db/DbConnection"); 
+require("./db/DbConnection");
 const server = express();
 const productRouter = require("./routes/Products");
 const brandsRouter = require("./routes/Brand");
@@ -17,7 +17,6 @@ const LocalStrategy = require("passport-local").Strategy;
 const crypto = require("crypto");
 const { isAuth, sanitizaUser, cookieExtractor } = require("./server/Common");
 const JwtStrategy = require("passport-jwt").Strategy;
-const ExtractJwt = require("passport-jwt").ExtractJwt;
 const cookieParser = require("cookie-parser");
 const jwt = require("jsonwebtoken");
 const path = require("path");
@@ -32,6 +31,7 @@ server.use(bodyParser.urlencoded({ limit: "100mb", extended: true }));
 server.use(cookieParser());
 server.use(cors({ exposedHeaders: ["X-Total-Count"] }));
 server.use(express.urlencoded({ extended: true })); // Parse form data
+server.use(bodyParser.json());
 
 // Session setup
 server.use(

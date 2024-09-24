@@ -1,6 +1,21 @@
 const { Product } = require("../modle/Product");
 const { Image } = require("../modle/Image");
 
+exports.Getproducts = async (req, res) => {
+  try {
+    const products = await Product.find().populate("images");
+
+    if (!products || products.length === 0) {
+      return res.status(404).json({ message: "No products found" });
+    }
+
+    res.status(200).json(products);
+  } catch (error) {
+    console.error("Error fetching products:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
+
 exports.createProduct = async (req, res) => {
   try {
     console.log("Request Body:", req.body);
