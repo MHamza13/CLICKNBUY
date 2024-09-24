@@ -69,13 +69,17 @@ exports.loginUser = async (req, res) => {
     res.status(500).json({ message: "Internal server error during login" });
   }
 };
+
 exports.logout = async (req, res) => {
   res
-    .cookie("jwt", null, {
-      expires: new Date(Date.now()),
+    .cookie("jwt", "", {
+      expires: new Date(0),
       httpOnly: true,
+      sameSite: "lax",
+      secure: process.env.NODE_ENV === "production",
     })
-    .sendStatus(200);
+    .status(200)
+    .json({ success: true, message: "Logout successful" });
 };
 
 exports.checkAuth = async (req, res) => {
