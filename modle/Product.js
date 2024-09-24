@@ -35,9 +35,12 @@ const productSchema = new mongoose.Schema({
 });
 
 // Adding a virtual field for ID
-productSchema.virtual("id").get(function () {
-  return this._id.toHexString();
-});
+productSchema.virtual("id").get(
+  function () {
+    return this._id.toHexString();
+  },
+  { timestamps: true }
+);
 
 // Configuring schema toJSON behavior
 productSchema.set("toJSON", {
