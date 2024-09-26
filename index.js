@@ -50,13 +50,13 @@ server.use(passport.session());
 server.use(express.static(path.resolve(__dirname, "dist")));
 
 // API routes
-server.use("/products", isAuth(), productRouter.router);
-server.use("/categories", isAuth(), categoriesRouter.router);
-server.use("/brands", isAuth(), brandsRouter.router);
-server.use("/users", isAuth(), userRouter.router);
+server.use("/products", productRouter.router);
+server.use("/categories", categoriesRouter.router);
+server.use("/brands", brandsRouter.router);
+server.use("/users", userRouter.router);
 server.use("/auth", authRouter.router);
-server.use("/carts", isAuth(), cartRouter.router);
-server.use("/orders", isAuth(), ordersRouter.router);
+server.use("/carts", cartRouter.router);
+server.use("/orders", ordersRouter.router);
 
 // Payment routes
 server.post("/create-payment-intent", async (req, res) => {
