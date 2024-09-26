@@ -113,7 +113,7 @@ exports.resetPasswordRequest = async (req, res) => {
     user.resetPasswordToken = token;
     await user.save();
 
-    const resetPage = `https://e-commerence-store-beta.vercel.app/reset-password?token=${token}&email=${email}`;
+    const resetPage = `https://e-commerence-store-lemon.vercel.app/reset-password?token=${token}&email=${email}`;
     const subject = "Reset Password for E-commerce";
     const html = `<p>Click <a href="${resetPage}">here</a> to reset password</p>`;
 
