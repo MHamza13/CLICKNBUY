@@ -51,13 +51,10 @@ exports.loginUser = async (req, res) => {
         .json({ message: "User not authenticated or token missing" });
     }
 
-    console.log("Setting JWT Cookie for user:", user);
-
     res.cookie("jwt", user.token, {
       expires: new Date(Date.now() + 3600000),
       httpOnly: true,
       sameSite: "lax",
-      secure: process.env.NODE_ENV === "production",
     });
 
     res.status(201).json({
@@ -70,16 +67,25 @@ exports.loginUser = async (req, res) => {
   }
 };
 
+// Controller: Auth.js
 exports.logout = async (req, res) => {
-  res
-    .cookie("jwt", "", {
-      expires: new Date(0),
-      httpOnly: true,
+  try {
+    // Clear the JWT cookie by setting expiration to a past date
+    res.cookie("jwt", "", {
+      expires: new Date(0), // Set cookie expiry to the past to clear it
+      httpOnly: false, // Make sure to use the same settings as when the cookie was set
       sameSite: "lax",
-      secure: process.env.NODE_ENV === "production",
-    })
-    .status(200)
-    .json({ success: true, message: "Logout successful" });
+    });
+
+    // Return success response
+    res
+      .status(200)
+      .json({ message: "Logged out successfully, cookie cleared." });
+    console.log("JWT cookie cleared");
+  } catch (error) {
+    console.error("Error during logout:", error);
+    res.status(500).json({ message: "Internal server error during logout" });
+  }
 };
 
 exports.checkAuth = async (req, res) => {
@@ -100,10 +106,8 @@ exports.getAllUsers = async (req, res) => {
 };
 
 exports.resetPasswordRequest = async (req, res) => {
-  console.log(req.body);
   const email = req.body.email;
   const user = await User.findOne({ email: email });
-  console.log("Received:", user);
 
   if (user) {
     const token = crypto.randomBytes(48).toString("hex");

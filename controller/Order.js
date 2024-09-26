@@ -1,4 +1,5 @@
 const { Order } = require("../modle/Order");
+const { Product } = require("../modle/Product");
 const { User } = require("../modle/User");
 const { invoiceTemplate, sendMail } = require("../server/Common");
 
@@ -14,6 +15,13 @@ exports.fetchOrdersByUser = async (req, res) => {
 
 exports.createOrder = async (req, res) => {
   const order = new Order(req.body);
+
+  for (let item of order.items) {
+    let product = await Product.findOne({ _id: item.product.id });
+    product.$inc("stock", -1 * item.quantity);
+    // for optimum performance we should make inventory outside of product.
+    await product.save();
+  }
   try {
     const doc = await order.save();
 
@@ -63,7 +71,6 @@ exports.fetchAllOrders = async (req, res) => {
   }
 
   const totalDocs = await totalOrdersQuery.countDocuments().exec();
-  console.log({ totalDocs });
 
   if (req.query._page && req.query._limit) {
     const pageSize = req.query._limit;

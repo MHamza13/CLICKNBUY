@@ -15,16 +15,13 @@ exports.cookieExtractor = function (req) {
     token = req.cookies["jwt"];
     console.log("Extracted JWT Token:", token);
   }
-
-  // token =
-  // "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2ZWE3ZDkxNjIwZTM0MDM4MWNhMTYwZCIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTcyNjg5Mjk4OX0.x4us9kKYvI3-af9NN8tnCPJNtVImGQCDeszciRQ13eQ";
   return token;
 };
 
 let transporter = nodemailer.createTransport({
   host: "smtp.gmail.com",
   port: 587,
-  secure: false, // true for 465, false for other ports
+  secure: false,
   auth: {
     user: "iamhamza013@gmail.com", // gmail
     pass: process.env.EMAIL_PASSWORD, // pass
@@ -154,9 +151,9 @@ exports.invoiceTemplate = function (order) {
          <table border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 600px;">
            <tr>
              <td align="center" valign="top" style="padding: 36px 24px;">
-               <a href="https://sendgrid.com" target="_blank" style="display: inline-block;">
+               <a href="https://e-commerence-store-beta.vercel.app" target="_blank" style="display: inline-block;">
                <?xml version="1.0" encoding="UTF-8"?>
-                <svg version="1.1" viewBox="0 0 2048 839" width="522" height="214" xmlns="http://www.w3.org/2000/svg">
+                <svg version="1.1" viewBox="0 0 2048 839" width="300" height="200" xmlns="http://www.w3.org/2000/svg">
                 <path transform="translate(282,344)" d="m0 0h3l-1 9-6 23-4 24-1 13v44l2 22 2 11 1-31 3-29 5-26 7-25 4-11 2 1 3 35 5 28 10 40 12 36 10 23 8 16 9 16 10 14 11 13 9 8 10 6 15 5 6 4 4 5 2 5v11l-3 7-6 8-9 6-10 4-14 3h-24l-12-3-15-6-21-11-11-8-14-12-12-11-31-29-14-9-10-4-13 1-6 3-4 9-2 13-6 9-3 3-6 2h-7l-8-3-9-8-10-15-12-23-7-11-10-6h-7l-5 6-1 3v20l-3 10-4 6-4 4-6 3h-9l-8-4-5-6-5-10-1-4v-16l5-21 8-20 13-30 13-35 6-21 13-75 2-1 72-3zm-110 36-10 3-10 7-6 8-3 8v7l3 9 9 10 9 5 8 3 7 1h9l11-3 10-5 8-7 5-10v-12l-5-10-7-7-9-5-9-2z" fill="#F49538"/>
                 <path transform="translate(282,344)" d="m0 0h3l-1 9-6 23-4 24-1 13v44l2 22 2 11 1-31 3-29 5-26 7-25 4-11 2 1 3 35 5 28 10 40 12 36v2l-18 8-11 8-10 8-6 3-21-7-25-8-36-9-41-8-43-7-16-2-4-2v-56l4-16 12-69 2-1 72-3zm-110 36-10 3-10 7-6 8-3 8v7l3 9 9 10 9 5 8 3 7 1h9l11-3 10-5 8-7 5-10v-12l-5-10-7-7-9-5-9-2z" fill="#352D72"/>
                 <path transform="translate(197,250)" d="m0 0h16l12 3 9 5 7 8 6 12 4 15 1 13 30-3h5v12l-1 18-1 1-49 3-109 6h-13v-16l1-8 31-2v-7l5-19 8-16 9-11 10-7 11-5zm-2 14-12 4-9 7-7 8-7 15-4 15v2h12l60-6 10-2v-9l-3-13-5-10-7-7-11-4z" fill="#34A5A4"/>

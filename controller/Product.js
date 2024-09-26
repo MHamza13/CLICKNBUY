@@ -18,11 +18,10 @@ exports.Getproducts = async (req, res) => {
 
 exports.createProduct = async (req, res) => {
   try {
-    console.log("Request Body:", req.body);
-
     const { products } = req.body;
-
-    console.log("PRODUCTS:", products);
+    product.discountedPrice = Math.round(
+      product.price * (1 - product.discountPercentage / 100)
+    );
 
     if (!products || typeof products !== "object") {
       return res
@@ -65,9 +64,14 @@ exports.createProduct = async (req, res) => {
       }
     }
 
+    const discountedPrice = Math.round(
+      products.price * (1 - (products.discountPercentage || 0) / 100)
+    );
+
     let product = new Product({
       ...products,
       images: imageResults,
+      discountedPrice,
     });
     let result = await product.save();
 
@@ -94,14 +98,14 @@ exports.fetchAllProduct = async (req, res) => {
 
   // Apply category filter if provided
   if (req.query.category) {
-    const categories = req.query.category.split(","); // Assuming multiple categories can be passed as a comma-separated list
+    const categories = req.query.category.split(",");
     query = query.where("category").in(categories);
     totalProductsQuery = totalProductsQuery.where("category").in(categories);
   }
 
   // Apply brand filter if provided
   if (req.query.brand) {
-    const brands = req.query.brand.split(","); // Assuming multiple brands can be passed as a comma-separated list
+    const brands = req.query.brand.split(",");
     query = query.where("brand").in(brands);
     totalProductsQuery = totalProductsQuery.where("brand").in(brands);
   }
@@ -145,8 +149,21 @@ exports.updateProduct = async (req, res) => {
     const product = await Product.findByIdAndUpdate(id, req.body, {
       new: true,
     });
-    res.status(200).json(product);
+
+    if (!product) {
+      return res.status(404).json({ message: "Product not found" });
+    }
+
+    product.discountedPrice = Math.round(
+      product.price * (1 - (product.discountPercentage || 0) / 100)
+    );
+
+    const updatedProduct = await product.save();
+    res.status(200).json(updatedProduct);
   } catch (err) {
-    res.status(400).json(err);
+    console.error("Error updating product:", err);
+    res
+      .status(400)
+      .json({ message: "Failed to update product", error: err.message });
   }
 };

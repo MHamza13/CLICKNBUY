@@ -12,7 +12,6 @@ exports.fetchBrands = async (req, res) => {
 
 exports.createBrand = async (req, res) => {
   try {
-    console.log("Request Body:", req.body);
 
     const { label, value, image } = req.body;
 
