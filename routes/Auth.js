@@ -6,7 +6,7 @@ const {
   getAllUsers,
   resetPasswordRequest,
   resetPassword,
-  logout,
+  logout, 
 } = require("../controller/Auth");
 const passport = require("passport");
 
@@ -16,7 +16,7 @@ router
   .post("/signup", createUser)
   .post("/login", passport.authenticate("local"), loginUser)
   .get("/check", passport.authenticate("jwt"), checkAuth)
-  .get("/logout", logout)
+  .post('/logout', logout)
   .get("/users", getAllUsers)
   .post("/reset-password-request", resetPasswordRequest)
   .post("/reset-password", resetPassword);
