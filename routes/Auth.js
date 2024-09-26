@@ -16,7 +16,7 @@ router
   .post("/signup", createUser)
   .post("/login", passport.authenticate("local"), loginUser)
   .get("/check", passport.authenticate("jwt"), checkAuth)
-  .post("/logout", logout)
+  .get("/logout", logout)
   .get("/users", getAllUsers)
   .post("/reset-password-request", resetPasswordRequest)
   .post("/reset-password", resetPassword);

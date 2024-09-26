@@ -70,10 +70,9 @@ exports.loginUser = async (req, res) => {
 // Controller: Auth.js
 exports.logout = async (req, res) => {
   try {
-    // Clear the JWT cookie by setting expiration to a past date
     res.cookie("jwt", "", {
-      expires: new Date(0), // Set cookie expiry to the past to clear it
-      httpOnly: false, // Make sure to use the same settings as when the cookie was set
+      expires: new Date(0),
+      httpOnly: false,
       sameSite: "lax",
     });
 
