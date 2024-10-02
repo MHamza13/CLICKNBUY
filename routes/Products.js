@@ -17,5 +17,6 @@ router
   .get("/", fetchAllProduct)
   .get("/:id", fetchProductById)
   .patch("/:id", updateProduct);
+  
 
 module.exports = { router };
