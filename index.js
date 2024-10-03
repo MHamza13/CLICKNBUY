@@ -55,7 +55,7 @@ server.use("/categories", categoriesRouter.router);
 server.use("/brands", brandsRouter.router);
 server.use("/users", userRouter.router);
 server.use("/auth", authRouter.router);
-server.use("/carts", cartRouter.router);
+server.use("/carts", isAuth(), cartRouter.router);
 server.use("/orders", ordersRouter.router);
 
 // Payment routes
