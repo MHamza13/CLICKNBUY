@@ -16,12 +16,13 @@ exports.Getproducts = async (req, res) => {
   }
 };
 
+async function generateImageUrl(base64Image) {
+  return base64Image;
+}
+
 exports.createProduct = async (req, res) => {
   try {
     const { products } = req.body;
-    product.discountedPrice = Math.round(
-      product.price * (1 - product.discountPercentage / 100)
-    );
 
     if (!products || typeof products !== "object") {
       return res
@@ -43,24 +44,15 @@ exports.createProduct = async (req, res) => {
       }
     }
 
-    const imageFields = ["thumbnail", "image1", "image2", "image3"];
     const imageResults = [];
-    for (const field of imageFields) {
-      const img = products[field];
-      if (img && img.includes(";base64,")) {
-        const base64Data = img.split(";base64,").pop();
-        const mimeType = img.split(";")[0].split(":")[1];
-        const imageBuffer = Buffer.from(base64Data, "base64");
-
-        const image = new Image({
-          data: imageBuffer,
-          contentType: mimeType,
-        });
-
-        const savedImage = await image.save();
-        imageResults.push(savedImage._id);
-      } else if (img) {
-        console.error(`Invalid image data format for ${field}:`, img);
+    if (Array.isArray(products.images)) {
+      for (const base64Image of products.images) {
+        if (base64Image.includes(";base64,")) {
+          const imageUrl = await generateImageUrl(base64Image);
+          imageResults.push(imageUrl);
+        } else {
+          console.error("Invalid base64 format for image:", base64Image);
+        }
       }
     }
 
@@ -73,6 +65,7 @@ exports.createProduct = async (req, res) => {
       images: imageResults,
       discountedPrice,
     });
+
     let result = await product.save();
 
     res.status(201).json(result);

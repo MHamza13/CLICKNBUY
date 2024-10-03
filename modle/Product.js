@@ -32,7 +32,7 @@ const productSchema = new mongoose.Schema({
   sizes: { type: [mongoose.Schema.Types.Mixed] },
   thumbnail: { type: String, required: true },
   highlights: { type: [String] },
-  images: [{ type: String }],
+  images: [{ type: mongoose.Schema.Types.String, ref: "Image" }],
   discountedPrice: { type: Number },
   deleted: { type: Boolean, default: false },
 });
@@ -44,7 +44,6 @@ productSchema.virtual("id").get(
   },
   { timestamps: true }
 );
-
 
 // Configuring schema toJSON behavior
 productSchema.set("toJSON", {

@@ -36,7 +36,7 @@ exports.createCategory = async (req, res) => {
     const newCategory = new Category({
       label,
       value,
-      image, // Directly store base64-encoded image
+      image, 
     });
 
     // Save the new category
