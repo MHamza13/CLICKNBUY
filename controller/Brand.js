@@ -1,5 +1,4 @@
 const { Brand } = require("../modle/Brand");
-const { Image } = require("../modle/Image");
 
 exports.fetchBrands = async (req, res) => {
   try {
@@ -12,7 +11,6 @@ exports.fetchBrands = async (req, res) => {
 
 exports.createBrand = async (req, res) => {
   try {
-
     const { label, value, image } = req.body;
 
     if (!label || !value || !image) {

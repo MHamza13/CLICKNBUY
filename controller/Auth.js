@@ -96,8 +96,14 @@ exports.checkAuth = async (req, res) => {
 };
 
 exports.getAllUsers = async (req, res) => {
+  let query = User.find({});
+  let totalUsersQuery = User.find({});
+
+  const totalDocs = await totalUsersQuery.countDocuments().exec();
+
   try {
-    const users = await User.find({});
+    const users = await query.exec();
+    res.set("X-Total-Count", totalDocs);
     res.status(200).json(users);
   } catch (err) {
     res.status(400).json({ message: "Error fetching users", error: err });

@@ -1,6 +1,5 @@
 const { Category } = require("../modle/Category");
 const { User } = require("../modle/User");
-const { Image } = require("../modle/Image");
 
 exports.fetchCategories = async (req, res) => {
   try {
@@ -15,7 +14,6 @@ exports.fetchCategories = async (req, res) => {
 
 exports.createCategory = async (req, res) => {
   try {
-
     const { label, value, image } = req.body;
 
     // Validate category fields
@@ -36,7 +34,7 @@ exports.createCategory = async (req, res) => {
     const newCategory = new Category({
       label,
       value,
-      image, 
+      image,
     });
 
     // Save the new category
