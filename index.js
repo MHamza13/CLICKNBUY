@@ -53,7 +53,7 @@ server.use(express.static(path.resolve(__dirname, "dist")));
 server.use("/products", productRouter.router);
 server.use("/categories", categoriesRouter.router);
 server.use("/brands", brandsRouter.router);
-server.use("/users", userRouter.router);
+server.use("/users", isAuth(), userRouter.router);
 server.use("/auth", authRouter.router);
 server.use("/carts", isAuth(), cartRouter.router);
 server.use("/orders", ordersRouter.router);
