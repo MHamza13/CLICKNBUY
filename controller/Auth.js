@@ -67,7 +67,6 @@ exports.loginUser = async (req, res) => {
   }
 };
 
-// Controller: Auth.js
 exports.logout = async (req, res) => {
   try {
     res.cookie("jwt", "", {
@@ -76,7 +75,6 @@ exports.logout = async (req, res) => {
       sameSite: "lax",
     });
 
-    // Return success response
     res
       .status(200)
       .json({ message: "Logged out successfully, cookie cleared." });
