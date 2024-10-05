@@ -15,6 +15,8 @@ exports.cookieExtractor = function (req) {
     token = req.cookies["jwt"];
     console.log("Extracted JWT Token:", token);
   }
+  // token =
+  // "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2ZWE3ZDkxNjIwZTM0MDM4MWNhMTYwZCIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTcyODEwMzM3NH0.j0XijTOMLh7Gvjzg5zn2csHIEqzBzMHyG0NrSpMJCWo";
   return token;
 };
 
