@@ -61,8 +61,6 @@ exports.updateOrder = async (req, res) => {
 };
 
 exports.fetchAllOrders = async (req, res) => {
-  // sort = {_sort:"price",_order="desc"}
-  // pagination = {_page:1,_limit=10}
   let query = Order.find({ deleted: { $ne: true } });
   let totalOrdersQuery = Order.find({ deleted: { $ne: true } });
 
@@ -70,19 +68,21 @@ exports.fetchAllOrders = async (req, res) => {
     query = query.sort({ [req.query._sort]: req.query._order });
   }
 
-  const totalDocs = await totalOrdersQuery.countDocuments().exec();
-
-  if (req.query._page && req.query._limit) {
-    const pageSize = req.query._limit;
-    const page = req.query._page;
-    query = query.skip(pageSize * (page - 1)).limit(pageSize);
-  }
-
   try {
+    const totalDocs = await totalOrdersQuery.countDocuments().exec();
+
+    if (req.query._page && req.query._limit) {
+      const pageSize = parseInt(req.query._limit, 10) || 10;
+      const page = parseInt(req.query._page, 10) || 1;
+      query = query.skip(pageSize * (page - 1)).limit(pageSize);
+    }
+
     const docs = await query.exec();
-    res.set("X-Total-Count", totalDocs);
+
+    res.set("x-Total-Count", totalDocs);
+
     res.status(200).json(docs);
   } catch (err) {
-    res.status(400).json(err);
+    res.status(400).json({ error: err.message });
   }
 };

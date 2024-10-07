@@ -149,6 +149,7 @@ exports.updateProduct = async (req, res) => {
     product.discountedPrice = Math.round(
       product.price * (1 - (product.discountPercentage || 0) / 100)
     );
+    product.deleted = false;
 
     const updatedProduct = await product.save();
     res.status(200).json(updatedProduct);
