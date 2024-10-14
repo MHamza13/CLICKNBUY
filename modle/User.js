@@ -11,6 +11,7 @@ const userSchema = new Schema(
     name: { type: String },
     salt: Buffer,
     resetPasswordToken: { type: String, default: "" },
+    profileImage: { type: String, default: "" },
   },
   { timestamps: true }
 );

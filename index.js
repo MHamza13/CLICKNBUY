@@ -9,6 +9,7 @@ const userRouter = require("./routes/User");
 const authRouter = require("./routes/Auth");
 const cartRouter = require("./routes/Cart");
 const ordersRouter = require("./routes/Order");
+const contactRouter = require("./routes/contact");
 const cors = require("cors");
 const session = require("express-session");
 const passport = require("passport");
@@ -57,6 +58,7 @@ server.use("/users", isAuth(), userRouter.router);
 server.use("/auth", authRouter.router);
 server.use("/carts", isAuth(), cartRouter.router);
 server.use("/orders", isAuth(), ordersRouter.router);
+server.use("/contact", isAuth(), contactRouter.router);
 
 // Payment routes
 server.post("/create-payment-intent", async (req, res) => {
