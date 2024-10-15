@@ -13,7 +13,7 @@ exports.fetchUserById = async (req, res) => {
       email: user.email,
       role: user.role,
       name: user.name,
-      profileImage: user.profileImage, 
+      profileImage: user.profileImage,
     });
   } catch (err) {
     res.status(500).json({ message: "Server error", error: err.message });
@@ -22,19 +22,26 @@ exports.fetchUserById = async (req, res) => {
 
 exports.updateUser = async (req, res) => {
   const { id } = req.params;
-  const { profileImage } = req.body; 
+
   try {
     const user = await User.findById(id);
-
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
 
-    if (profileImage) {
-      user.profileImage = profileImage; 
+    if (req.body.profileImage) {
+      user.profileImage = req.body.profileImage;
     }
 
-    const updatedUser = await user.save(); 
+    if (req.body.role) {
+      user.role = req.body.role;
+    }
+
+    if (req.body.addresses) {
+      user.addresses = req.body.addresses;
+    }
+
+    const updatedUser = await user.save();
     res.status(200).json(updatedUser);
   } catch (err) {
     res
