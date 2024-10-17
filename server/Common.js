@@ -15,6 +15,7 @@ exports.cookieExtractor = function (req) {
     token = req.cookies["jwt"];
     console.log("Extracted JWT Token:", token);
   }
+
   return token;
 };
 
