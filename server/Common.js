@@ -1,5 +1,15 @@
 const passport = require("passport");
 const nodemailer = require("nodemailer");
+const { google } = require("googleapis");
+
+const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID;
+const GOOGLE_CLIENT_SECERET = process.env.GOOGLE_CLIENT_SECERET;
+
+exports.oauth2Client = new google.auth.OAuth2(
+  GOOGLE_CLIENT_ID,
+  GOOGLE_CLIENT_SECERET,
+  "postmessage"
+);
 
 exports.isAuth = (req, res, done) => {
   return passport.authenticate("jwt");
@@ -16,7 +26,8 @@ exports.cookieExtractor = function (req) {
     console.log("Extracted JWT Token:", token);
   }
 
-
+  // token =
+    // "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3NTgyMmE3ZDcwZWZiZDVhM2ZjZmM3MiIsInJvbGUiOiJ1c2VyIiwiaWF0IjoxNzMzODI5MzgwfQ.5FcG6P145-NgPsYQ7Dw4JyHXOqd4Plhz4EHB1Sht4SI";
   return token;
 };
 

@@ -22,6 +22,8 @@ const cookieParser = require("cookie-parser");
 const jwt = require("jsonwebtoken");
 const path = require("path");
 const bodyParser = require("body-parser");
+const FacebookStrategy = require("passport-facebook").Strategy;
+const sendEmail = require("./server/Common");
 
 // Stripe setup
 const stripe = require("stripe")(process.env.STRIPE_SERVER_KRY);
@@ -75,7 +77,8 @@ server.post("/create-payment-intent", async (req, res) => {
   res.send({ clientSecret: paymentIntent.client_secret });
 });
 
-// Webhook route for Stripe
+// Webhook route for Strip
+
 server.post(
   "/webhook",
   express.raw({ type: "application/json" }),
@@ -163,13 +166,114 @@ passport.use(
   )
 );
 
+// Passport FaceBook strategies
+
+passport.use(
+  new FacebookStrategy(
+    {
+      clientID: process.env.FACEBOOK_APP_ID,
+      clientSecret: process.env.FACEBOOK_SECRET,
+      callbackURL: "http://localhost:8080/auth/facebook/callback",
+      profileFields: ["id", "displayName", "email", "photos"],
+    },
+    async (accessToken, refreshToken, profile, cb) => {
+      console.log("Facebook Profile:", profile);
+      try {
+        console.log("Access Token:", accessToken);
+
+        // Email fetched from Facebook profile object
+        let email =
+          profile.emails && profile.emails.length > 0
+            ? profile.emails[0].value
+            : null;
+
+        // Fetch email from Graph API if not provided in the profile object
+        if (!email) {
+          console.log(
+            "Email not provided in profile. Fetching from Graph API..."
+          );
+          const response = await fetch(
+            `https://graph.facebook.com/v21.0/${profile.id}?fields=email&access_token=${accessToken}`
+          );
+
+          if (!response.ok) {
+            throw new Error(
+              `Failed to fetch email from Graph API: ${response.statusText}`
+            );
+          }
+
+          const data = await response.json(); // Parse JSON response
+          email = data.email || null; // Extract email from response
+        }
+
+        if (!email) {
+          console.log("Email still not available. Prompting manual entry.");
+          return cb(null, false, {
+            message:
+              "Email not returned by Facebook. Please provide your email manually.",
+          });
+        }
+
+        const profileImage =
+          profile.photos && profile.photos.length > 0
+            ? profile.photos[0].value
+            : null;
+
+        // Check if the user exists in your database
+        let user = await User.findOne({
+          accountId: profile.id,
+          provider: "facebook",
+        });
+
+        if (!user) {
+          console.log("Adding new Facebook user...");
+          user = new User({
+            accountId: profile.id,
+            name: profile.displayName,
+            email: email,
+            provider: profile.provider,
+            profileImage: profileImage || null,
+          });
+
+          await user.save();
+          console.log("New user added:", user);
+        } else {
+          console.log("Facebook user exists:", user);
+
+          // If email or profile image is missing, update them
+          let updated = false;
+          if (!user.email && email) {
+            user.email = email;
+            updated = true;
+          }
+          if (!user.profileImage && profileImage) {
+            user.profileImage = profileImage;
+            updated = true;
+          }
+          if (updated) {
+            await user.save();
+            console.log("User information updated:", user);
+          }
+        }
+
+        return cb(null, user);
+      } catch (error) {
+        console.error("Error in Facebook strategy:", error);
+        return cb(error, null);
+      }
+    }
+  )
+);
+
 // Session serialization and deserialization
 passport.serializeUser((user, cb) => {
   process.nextTick(() => cb(null, { id: user.id, role: user.role }));
+  cb(null, user);
 });
 
-passport.deserializeUser((user, cb) => {
+passport.deserializeUser((user, id, cb) => {
   process.nextTick(() => cb(null, sanitizaUser(user)));
+  cb(null, id);
 });
 
 // Catch-all route for serving the frontend (this must be the last route)

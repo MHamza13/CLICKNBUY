@@ -2,6 +2,8 @@ const { User } = require("../modle/User");
 const crypto = require("crypto");
 const { sanitizaUser, sendMail } = require("../server/Common");
 const jwt = require("jsonwebtoken");
+const { oauth2Client } = require("../server/Common");
+const passport = require("passport");
 
 exports.createUser = async (req, res) => {
   try {
@@ -13,33 +15,144 @@ exports.createUser = async (req, res) => {
       32,
       "sha256",
       async function (err, hashedPassword) {
-        const user = new User({ ...req.body, password: hashedPassword, salt });
+        if (err) {
+          return res.status(500).json({ message: "Error hashing password" });
+        }
+
+        const verificationToken = crypto.randomBytes(48).toString("hex");
+        const verificationTokenExpires = Date.now() + 3600000;
+
+        const user = new User({
+          ...req.body,
+          password: hashedPassword,
+          salt,
+          emailVerified: false,
+          verificationToken,
+          verificationTokenExpires,
+        });
+
         const doc = await user.save();
 
-        req.login(sanitizaUser(doc), (err) => {
-          // this also calls serializer and adds to session
-          if (err) {
-            res.status(400).json(err);
-          } else {
-            const token = jwt.sign(
-              sanitizaUser(doc),
-              process.env.JWT_SECRET_KEY
-            );
-            res
-              .cookie("jwt", token, {
-                expires: new Date(Date.now() + 3600000),
-                httpOnly: true,
-              })
-              .status(201)
-              .json({ id: user.id, role: user.role });
-          }
-        });
+        const verificationLink = `http://localhost:8080/verify-email/${verificationToken}`;
+
+        const subject = "Verify Your Email for E-commerce";
+        const html = `
+        <p>Thank you for signing up. Please verify your email address by clicking the link below:</p>
+        <p><a href="${verificationLink}">Verify Email</a></p>
+      `;
+
+        try {
+          await sendMail({ to: req.body.email, subject, html });
+          res.status(201).json({
+            message: "User created. Verification email sent.",
+            id: user.id,
+          });
+        } catch (emailError) {
+          console.error("Error sending email:", emailError);
+          res.status(500).json({ message: "Error sending verification email" });
+        }
       }
     );
   } catch (err) {
     res.status(400).json(err);
   }
 };
+
+exports.verifyEmail = async (req, res) => {
+  const { token } = req.params;
+
+  try {
+    if (!token) {
+      return res.status(400).json({ message: "Missing verification token." });
+    }
+
+    const user = await User.findOne({ verificationToken: token });
+
+    if (!user) {
+      return res
+        .status(400)
+        .json({ message: "Invalid or expired verification token." });
+    }
+
+    if (user.verificationTokenExpires < Date.now()) {
+      return res
+        .status(400)
+        .json({ message: "Verification token has expired." });
+    }
+
+    user.emailVerified = true;
+    user.verificationToken = undefined;
+    user.verificationTokenExpires = undefined;
+    await user.save();
+
+    res.status(200).json({ message: "Email verified successfully." });
+  } catch (error) {
+    console.error("Error verifying email:", error);
+    res.status(500).json({ message: "Internal server error." });
+  }
+};
+
+exports.googleAuth = async (req, res) => {
+  const code = req.query.code;
+
+  try {
+    if (!code) {
+      return res
+        .status(400)
+        .json({ message: "Authorization code is required." });
+    }
+
+    const { tokens } = await oauth2Client.getToken(code);
+    oauth2Client.setCredentials(tokens);
+
+    const userRes = await fetch(
+      `https://www.googleapis.com/oauth2/v1/userinfo?alt=json&access_token=${tokens.access_token}`
+    );
+
+    if (!userRes.ok) {
+      const error = await userRes.json();
+      throw new Error(`Google API error: ${error.error.message}`);
+    }
+
+    const { email, name, picture } = await userRes.json();
+
+    let user = await User.findOne({ email });
+    if (!user) {
+      user = await User.create({
+        name,
+        email,
+        profileImage: picture,
+        emailVerified: true,
+        provider: "google",
+      });
+    }
+
+    const jwtSecret = process.env.JWT_SECRET || "default_secret_key";
+    const token = jwt.sign({ _id: user._id, email }, jwtSecret, {
+      expiresIn: process.env.JWT_TIMEOUT || "1h",
+    });
+
+    return res.status(200).json({
+      message: "success",
+      token,
+      user,
+    });
+  } catch (err) {
+    console.error("Error during Google Authentication:", err.message);
+
+    return res.status(500).json({
+      message: "Internal Server Error",
+      error: err.message,
+    });
+  }
+};
+
+exports.facebookAuth = passport.authenticate("facebook", { scope: ["email"] });
+
+exports.facebookCallback = passport.authenticate("facebook", {
+  failureRedirect: "http://localhost:5173/login",
+  successRedirect: "http://localhost:5173",
+});
 
 exports.loginUser = async (req, res) => {
   try {

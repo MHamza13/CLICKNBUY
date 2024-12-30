@@ -37,7 +37,6 @@ const productSchema = new mongoose.Schema({
   deleted: { type: Boolean, default: false },
 });
 
-// Adding a virtual field for ID
 productSchema.virtual("id").get(
   function () {
     return this._id.toHexString();
@@ -45,7 +44,6 @@ productSchema.virtual("id").get(
   { timestamps: true }
 );
 
-// Configuring schema toJSON behavior
 productSchema.set("toJSON", {
   virtuals: true,
   versionKey: false,
