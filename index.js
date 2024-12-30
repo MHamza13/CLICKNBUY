@@ -173,8 +173,8 @@ passport.use(
     {
       clientID: process.env.FACEBOOK_APP_ID,
       clientSecret: process.env.FACEBOOK_SECRET,
-      callbackURL: "http://localhost:8080/auth/facebook/callback",
-      profileFields: ["id", "displayName", "email", "photos"],
+      callbackURL: "https://my-store-kappa-nine.vercel.app/auth/facebook/callback",
+      profileFields: ["id", "displayName", "emails", "photos"],
     },
     async (accessToken, refreshToken, profile, cb) => {
       console.log("Facebook Profile:", profile);
