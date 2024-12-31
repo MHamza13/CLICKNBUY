@@ -175,86 +175,78 @@ passport.use(
       clientSecret: process.env.FACEBOOK_SECRET,
       callbackURL:
         "https://my-store-kappa-nine.vercel.app/auth/facebook/callback",
-      profileFields: ["id", "displayName", "email", "photos"],
+      profileFields: ["id", "displayName", "email"],
+      scope: ["public_profile", "email"],
     },
-    async (accessToken, refreshToken, profile, cb) => {
-      console.log("Facebook Profile:", profile);
+    async function (accessToken, refreshToken, profile, cb) {
       try {
-        let email =
-          profile.emails && profile.emails.length > 0
-            ? profile.emails[0].value
-            : null;
+        // Extract email if available
+        const email = profile.emails && profile.emails[0]?.value;
 
-        if (!email) {
-          console.log(
-            "Email not provided in profile. Fetching from Graph API..."
-          );
-          const response = await fetch(
-            `https://graph.facebook.com/v21.0/${profile.id}?fields=email&access_token=${accessToken}`
-          );
+        // Log the profile data for debugging
+        console.log("Facebook Profile:", profile);
+        console.log("Extracted Email:", email);
 
-          if (!response.ok) {
-            throw new Error(
-              `Failed to fetch email from Graph API: ${response.statusText}`
-            );
-          }
-
-          const data = await response.json();
-          email = data.email || null;
-        }
-
-        if (!email) {
-          console.log("Email still not available. Prompting manual entry.");
-          return cb(null, false, {
-            message:
-              "Email not returned by Facebook. Please provide your email manually.",
-          });
-        }
-
-        const profileImage =
-          profile.photos && profile.photos.length > 0
-            ? profile.photos[0].value
-            : null;
-        console.log("Profile image:", profileImage);
-
+        // Search for user in DB
         let user = await User.findOne({
           accountId: profile.id,
           provider: "facebook",
         });
 
         if (!user) {
-          console.log("Adding new Facebook user...");
+          console.log("Adding new Facebook user to DB...");
+
           user = new User({
             accountId: profile.id,
             name: profile.displayName,
-            email: email,
+            email: email || null,
             provider: profile.provider,
-            profileImage: profileImage || null,
           });
+
           await user.save();
           console.log("New user added:", user);
         } else {
-          console.log("Facebook user exists:", user);
+          console.log("Facebook User already exists in DB:", user);
 
-          let updated = false;
+          // Update email if not already set
           if (!user.email && email) {
             user.email = email;
-            updated = true;
-          }
-          if (!user.profileImage && profileImage) {
-            user.profileImage = profileImage;
-            updated = true;
-          }
-          if (updated) {
             await user.save();
-            console.log("User information updated:", user);
+            console.log("User email updated:", user.email);
           }
+        }
+
+        // Send login success email
+        if (email) {
+          const emailSubject = "Welcome to Dhicoins Exchange";
+          const emailText = `Dear ${user.name}, you have successfully logged in to your Dhicoins account using Facebook. Enjoy our services!`;
+
+          const emailHTML = `
+            <div style="font-family: Arial, sans-serif; line-height: 1.6;">
+              <img src="https://dhicoins.com/DhicoinIndex/images/dhicoins.png" alt="Dhicoins Logo" style="width: 160px; height: auto; margin: 0 auto; display: block;" />
+              <h2 style="color: #333; text-align: center;">Welcome to Dhicoins Exchange</h2>
+              <p style="margin-left: 18px;">Dear ${user.name},</p>
+              <p>You have successfully logged in to your Dhicoins account using Facebook. Enjoy our services!</p>
+              <p>Best Regards,<br>Dhicoins Team</p>
+              <p style="color: #999; font-size: 12px; text-align: center; margin-top: 20px;">
+                If you did not request this, please ignore this email.
+              </p>
+              <p style="color: #999; font-size: 12px; text-align: center;">
+                &copy; ${new Date().getFullYear()} Dhicoins Exchange. All rights reserved.
+              </p>
+            </div>
+          `;
+
+          await sendEmail(email, emailSubject, emailText, emailHTML);
+          console.log(`Login success email sent to ${email}`);
+        } else {
+          console.log("No email available to send the login success email.");
         }
 
         return cb(null, user);
       } catch (error) {
-        console.error("Error in Facebook strategy:", error);
-        return cb(error, null); // Return the error to help debug
+        console.error("Error in FacebookStrategy:", error);
+        return cb(error, null);
       }
     }
   )
