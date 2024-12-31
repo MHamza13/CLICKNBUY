@@ -173,14 +173,13 @@ passport.use(
     {
       clientID: process.env.FACEBOOK_APP_ID,
       clientSecret: process.env.FACEBOOK_SECRET,
-      callbackURL: "https://my-store-kappa-nine.vercel.app/auth/facebook/callback",
+      callbackURL:
+        "https://my-store-kappa-nine.vercel.app/auth/facebook/callback",
       profileFields: ["id", "displayName", "email", "photos"],
     },
     async (accessToken, refreshToken, profile, cb) => {
       console.log("Facebook Profile:", profile);
       try {
-        console.log("Access Token:", accessToken);
-
         let email =
           profile.emails && profile.emails.length > 0
             ? profile.emails[0].value
@@ -216,6 +215,7 @@ passport.use(
           profile.photos && profile.photos.length > 0
             ? profile.photos[0].value
             : null;
+        console.log("Profile image:", profileImage);
 
         let user = await User.findOne({
           accountId: profile.id,
@@ -231,7 +231,6 @@ passport.use(
             provider: profile.provider,
             profileImage: profileImage || null,
           });
-
           await user.save();
           console.log("New user added:", user);
         } else {
