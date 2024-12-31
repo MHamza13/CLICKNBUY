@@ -254,7 +254,7 @@ passport.use(
         return cb(null, user);
       } catch (error) {
         console.error("Error in Facebook strategy:", error);
-        return cb(error, null);
+        return cb(error, null); // Return the error to help debug
       }
     }
   )
