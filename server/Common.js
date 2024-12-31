@@ -26,8 +26,7 @@ exports.cookieExtractor = function (req) {
     console.log("Extracted JWT Token:", token);
   }
 
-  // token =
-    // "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3NTgyMmE3ZDcwZWZiZDVhM2ZjZmM3MiIsInJvbGUiOiJ1c2VyIiwiaWF0IjoxNzMzODI5MzgwfQ.5FcG6P145-NgPsYQ7Dw4JyHXOqd4Plhz4EHB1Sht4SI";
+  // token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3NzM5OGFiMDEwOWYyY2ZkNDE0NTYwMCIsInJvbGUiOiJ1c2VyIiwiaWF0IjoxNzM1NjI4OTk0fQ.ZjzBqoJFJdJ_Oko5vzhg-An7V6qrsMTEWH0OA8zMrek";
   return token;
 };
 

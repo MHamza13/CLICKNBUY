@@ -174,20 +174,18 @@ passport.use(
       clientID: process.env.FACEBOOK_APP_ID,
       clientSecret: process.env.FACEBOOK_SECRET,
       callbackURL: "https://my-store-kappa-nine.vercel.app/auth/facebook/callback",
-      profileFields: ["id", "displayName", "emails", "photos"],
+      profileFields: ["id", "displayName", "email", "photos"],
     },
     async (accessToken, refreshToken, profile, cb) => {
       console.log("Facebook Profile:", profile);
       try {
         console.log("Access Token:", accessToken);
 
-        // Email fetched from Facebook profile object
         let email =
           profile.emails && profile.emails.length > 0
             ? profile.emails[0].value
             : null;
 
-        // Fetch email from Graph API if not provided in the profile object
         if (!email) {
           console.log(
             "Email not provided in profile. Fetching from Graph API..."
@@ -202,8 +200,8 @@ passport.use(
             );
           }
 
-          const data = await response.json(); // Parse JSON response
-          email = data.email || null; // Extract email from response
+          const data = await response.json();
+          email = data.email || null;
         }
 
         if (!email) {
@@ -219,7 +217,6 @@ passport.use(
             ? profile.photos[0].value
             : null;
 
-        // Check if the user exists in your database
         let user = await User.findOne({
           accountId: profile.id,
           provider: "facebook",
@@ -240,7 +237,6 @@ passport.use(
         } else {
           console.log("Facebook user exists:", user);
 
-          // If email or profile image is missing, update them
           let updated = false;
           if (!user.email && email) {
             user.email = email;
@@ -268,12 +264,10 @@ passport.use(
 // Session serialization and deserialization
 passport.serializeUser((user, cb) => {
   process.nextTick(() => cb(null, { id: user.id, role: user.role }));
-  cb(null, user);
 });
 
-passport.deserializeUser((user, id, cb) => {
+passport.deserializeUser((user, cb) => {
   process.nextTick(() => cb(null, sanitizaUser(user)));
-  cb(null, id);
 });
 
 // Catch-all route for serving the frontend (this must be the last route)
