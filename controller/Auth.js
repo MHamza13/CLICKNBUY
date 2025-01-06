@@ -132,6 +132,12 @@ exports.googleAuth = async (req, res) => {
       expiresIn: process.env.JWT_TIMEOUT || "1h",
     });
 
+    res.cookie("jwt", token, {
+      expires: new Date(Date.now() + 3600000), 
+      httpOnly: true,
+      sameSite: "lax", 
+    });
+
     return res.status(200).json({
       message: "success",
       token,
@@ -146,6 +152,7 @@ exports.googleAuth = async (req, res) => {
     });
   }
 };
+
 
 exports.facebookAuth = passport.authenticate("facebook", {
   scope: ["public_profile", "email"],
