@@ -133,9 +133,9 @@ exports.googleAuth = async (req, res) => {
     });
 
     res.cookie("jwt", token, {
-      expires: new Date(Date.now() + 3600000), 
+      expires: new Date(Date.now() + 3600000),
       httpOnly: true,
-      sameSite: "lax", 
+      sameSite: "lax",
     });
 
     return res.status(200).json({
@@ -152,7 +152,6 @@ exports.googleAuth = async (req, res) => {
     });
   }
 };
-
 
 exports.facebookAuth = passport.authenticate("facebook", {
   scope: ["public_profile", "email"],

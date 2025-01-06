@@ -19,9 +19,9 @@ const router = express.Router();
 router
   .post("/signup", createUser)
   .post("/login", passport.authenticate("local"), loginUser)
-  .get("/google", googleAuth)
+  .get("/google", passport.authenticate("jwt"), googleAuth)
   .get("/facebook", facebookAuth)
-  .get("/facebook/callback", facebookCallback) 
+  .get("/facebook/callback", facebookCallback)
   .get("/check", passport.authenticate("jwt"), checkAuth)
   .post("/logout", logout)
   .get("/users", getAllUsers)
