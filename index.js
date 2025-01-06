@@ -174,7 +174,7 @@ passport.use(
       clientID: "1126230255556278", // Replace with your actual client ID
       clientSecret: "27f95b19aa0d22b8029ea94d97b18d57", // Replace with your actual client secret
       callbackURL:
-        "https://my-store-kappa-nine.vercel.app/auth/facebook/callback",
+        "https://my-store-orpin-chi.vercel.app/login/auth/facebook/callback",
       profileFields: ["id", "displayName", "email"],
       scope: ["public_profile", "email"],
     },

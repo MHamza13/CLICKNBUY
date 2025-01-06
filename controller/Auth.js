@@ -33,7 +33,7 @@ exports.createUser = async (req, res) => {
 
         const doc = await user.save();
 
-        const verificationLink = `https://my-store-kappa-nine.vercel.app/verify-email/${verificationToken}`;
+        const verificationLink = `https://my-store-orpin-chi.vercel.app/login/verify-email/${verificationToken}`;
 
         const subject = "Verify Your Email for E-commerce";
         const html = `
@@ -152,8 +152,8 @@ exports.facebookAuth = passport.authenticate("facebook", {
 });
 
 exports.facebookCallback = passport.authenticate("facebook", {
-  failureRedirect: "https://my-store-kappa-nine.vercel.app/login",
-  successRedirect: "https://my-store-kappa-nine.vercel.app",
+  failureRedirect: "https://my-store-orpin-chi.vercel.app/login/login",
+  successRedirect: "https://my-store-orpin-chi.vercel.app/login",
 });
 
 exports.loginUser = async (req, res) => {
