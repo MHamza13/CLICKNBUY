@@ -167,7 +167,6 @@ passport.use(
 );
 
 // Passport FaceBook strategies
-
 passport.use(
   new FacebookStrategy(
     {
@@ -180,35 +179,33 @@ passport.use(
     },
     async function (accessToken, refreshToken, profile, cb) {
       try {
-        // Extract email if available
-        const email = profile.emails && profile.emails[0]?.value;
+        const email = profile.emails?.[0]?.value || null;
 
-        // Log the profile data for debugging
         console.log("Facebook Profile:", profile);
-        console.log("Extracted Email:", email);
 
-        // Search for user in DB
+        // Check if user exists in the database
         let user = await User.findOne({
           accountId: profile.id,
           provider: "facebook",
         });
 
         if (!user) {
+          // Create a new user if one doesn't exist
           console.log("Adding new Facebook user to DB...");
 
           user = new User({
             accountId: profile.id,
             name: profile.displayName,
-            email: email || null,
+            email,
             provider: profile.provider,
           });
 
           await user.save();
           console.log("New user added:", user);
         } else {
+          // Update user's email if it was missing earlier
           console.log("Facebook User already exists in DB:", user);
 
-          // Update email if not already set
           if (!user.email && email) {
             user.email = email;
             await user.save();
@@ -216,11 +213,10 @@ passport.use(
           }
         }
 
-        // Send login success email
+        // Send welcome email if email is available
         if (email) {
           const emailSubject = "Welcome to Dhicoins Exchange";
           const emailText = `Dear ${user.name}, you have successfully logged in to your Dhicoins account using Facebook. Enjoy our services!`;
-
           const emailHTML = `
             <div style="font-family: Arial, sans-serif; line-height: 1.6;">
               <img src="https://dhicoins.com/DhicoinIndex/images/dhicoins.png" alt="Dhicoins Logo" style="width: 160px; height: auto; margin: 0 auto; display: block;" />
@@ -237,15 +233,22 @@ passport.use(
             </div>
           `;
 
-          await sendEmail(email, emailSubject, emailText, emailHTML);
-          console.log(`Login success email sent to ${email}`);
+          try {
+            await sendEmail(email, emailSubject, emailText, emailHTML);
+            console.log(`Login success email sent to ${email}`);
+          } catch (emailError) {
+            console.error("Error sending email:", emailError);
+          }
         } else {
           console.log("No email available to send the login success email.");
         }
 
+        // Successfully authenticate the user
         return cb(null, user);
       } catch (error) {
         console.error("Error in FacebookStrategy:", error);
+
+        // Return error to the callback
         return cb(error, null);
       }
     }
