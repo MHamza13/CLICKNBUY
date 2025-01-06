@@ -93,7 +93,7 @@ exports.verifyEmail = async (req, res) => {
 };
 
 exports.googleAuth = async (req, res) => {
-  const code = req.query.code; // The authorization code from Google OAuth
+  const code = req.query.code;
 
   try {
     if (!code) {
@@ -102,11 +102,9 @@ exports.googleAuth = async (req, res) => {
         .json({ message: "Authorization code is required." });
     }
 
-    // Exchange the authorization code for tokens
     const { tokens } = await oauth2Client.getToken(code);
     oauth2Client.setCredentials(tokens);
 
-    // Fetch the user's Google profile information
     const userRes = await fetch(
       `https://www.googleapis.com/oauth2/v1/userinfo?alt=json&access_token=${tokens.access_token}`
     );
@@ -118,10 +116,7 @@ exports.googleAuth = async (req, res) => {
 
     const { email, name, picture } = await userRes.json();
 
-    // Check if the user already exists in the database
     let user = await User.findOne({ email });
-
-    // If the user doesn't exist, create a new one
     if (!user) {
       user = await User.create({
         name,
@@ -129,32 +124,24 @@ exports.googleAuth = async (req, res) => {
         profileImage: picture,
         emailVerified: true,
         provider: "google",
-        role: "user", // Adjust role as needed
       });
     }
 
-    // Generate a JWT token
-    const jwtSecret = process.env.JWT_SECRET || "default_secret_key";
-    const token = jwt.sign(
-      { _id: user._id, email: user.email, role: user.role },
-      jwtSecret,
-      {
-        expiresIn: process.env.JWT_TIMEOUT || "1h",
-      }
-    );
-
-    // Set the JWT token as a cookie
-    res.cookie("jwt", token, {
-      expires: new Date(Date.now() + 3600000), // 1 hour expiration
-      httpOnly: true,
-      sameSite: "lax",
+    const jwtSecret = process.env.JWT_SECRET_KEY || "default_secret_key";
+    const token = jwt.sign({ _id: user._id, email }, jwtSecret, {
+      expiresIn: process.env.JWT_TIMEOUT || "1h",
     });
 
-    // Respond with the user's data and the JWT token
-    return res.status(201).json({
-      id: user._id,
-      role: user.role,
-      token, // Optionally send the token in the response body
+    res.cookie("jwt", token, {
+      expires: new Date(Date.now() + 3600000), 
+      httpOnly: true,
+      sameSite: "lax", 
+    });
+
+    return res.status(200).json({
+      message: "success",
+      token,
+      user,
     });
   } catch (err) {
     console.error("Error during Google Authentication:", err.message);
@@ -165,6 +152,7 @@ exports.googleAuth = async (req, res) => {
     });
   }
 };
+
 
 exports.facebookAuth = passport.authenticate("facebook", {
   scope: ["public_profile", "email"],
