@@ -174,7 +174,7 @@ passport.use(
       clientID: process.env.FACEBOOK_APP_ID,
       clientSecret: process.env.FACEBOOK_SECRET,
       callbackURL:
-        "https://my-store-kappa-nine.vercel.app/auth/facebook/callback",
+        "https://my-store-orpin-chi.vercel.app/auth/facebook/callback",
       profileFields: ["id", "displayName", "email"],
       scope: ["public_profile", "email"],
     },
