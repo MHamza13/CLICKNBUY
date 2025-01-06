@@ -33,7 +33,7 @@ exports.createUser = async (req, res) => {
 
         const doc = await user.save();
 
-        const verificationLink = `https://my-store-orpin-chi.vercel.app/login/verify-email/${verificationToken}`;
+        const verificationLink = `https://my-store-orpin-chi.vercel.app/verify-email/${verificationToken}`;
 
         const subject = "Verify Your Email for E-commerce";
         const html = `
@@ -148,12 +148,12 @@ exports.googleAuth = async (req, res) => {
 };
 
 exports.facebookAuth = passport.authenticate("facebook", {
-  scope: ["public_profile", "email"], 
+  scope: ["public_profile", "email"],
 });
 
 exports.facebookCallback = passport.authenticate("facebook", {
-  failureRedirect: "https://my-store-orpin-chi.vercel.app/login/login",
-  successRedirect: "https://my-store-orpin-chi.vercel.app/login",
+  failureRedirect: "https://my-store-orpin-chi.vercel.app/login",
+  successRedirect: "https://my-store-orpin-chi.vercel.app",
 });
 
 exports.loginUser = async (req, res) => {
