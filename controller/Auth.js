@@ -33,7 +33,7 @@ exports.createUser = async (req, res) => {
 
         const doc = await user.save();
 
-        const verificationLink = `http://localhost:8080/verify-email/${verificationToken}`;
+        const verificationLink = `https://my-store-kappa-nine.vercel.app/verify-email/${verificationToken}`;
 
         const subject = "Verify Your Email for E-commerce";
         const html = `
@@ -148,7 +148,7 @@ exports.googleAuth = async (req, res) => {
 };
 
 exports.facebookAuth = passport.authenticate("facebook", {
-  scope: ["public_profile", "email"],
+  scope: ["public_profile", "email"], 
 });
 
 exports.facebookCallback = passport.authenticate("facebook", {

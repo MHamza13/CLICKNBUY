@@ -167,11 +167,12 @@ passport.use(
 );
 
 // Passport FaceBook strategies
+
 passport.use(
   new FacebookStrategy(
     {
-      clientID: process.env.FACEBOOK_APP_ID,
-      clientSecret: process.env.FACEBOOK_SECRET,
+      clientID: "1126230255556278",
+      clientSecret: "27f95b19aa0d22b8029ea94d97b18d57",
       callbackURL:
         "https://my-store-kappa-nine.vercel.app/auth/facebook/callback",
       profileFields: ["id", "displayName", "email"],
@@ -183,14 +184,12 @@ passport.use(
 
         console.log("Facebook Profile:", profile);
 
-        // Check if user exists in the database
         let user = await User.findOne({
           accountId: profile.id,
           provider: "facebook",
         });
 
         if (!user) {
-          // Create a new user if one doesn't exist
           console.log("Adding new Facebook user to DB...");
 
           user = new User({
@@ -203,7 +202,6 @@ passport.use(
           await user.save();
           console.log("New user added:", user);
         } else {
-          // Update user's email if it was missing earlier
           console.log("Facebook User already exists in DB:", user);
 
           if (!user.email && email) {
@@ -213,22 +211,21 @@ passport.use(
           }
         }
 
-        // Send welcome email if email is available
         if (email) {
-          const emailSubject = "Welcome to Dhicoins Exchange";
-          const emailText = `Dear ${user.name}, you have successfully logged in to your Dhicoins account using Facebook. Enjoy our services!`;
+          const emailSubject = "Welcome to My Store!";
+          const emailText = `Dear ${user.name}, welcome to My Store! You have successfully logged in to your account using Facebook. Start exploring our exciting products and enjoy a seamless shopping experience!`;
           const emailHTML = `
             <div style="font-family: Arial, sans-serif; line-height: 1.6;">
-              <img src="https://dhicoins.com/DhicoinIndex/images/dhicoins.png" alt="Dhicoins Logo" style="width: 160px; height: auto; margin: 0 auto; display: block;" />
-              <h2 style="color: #333; text-align: center;">Welcome to Dhicoins Exchange</h2>
+              <img src="https://my-store.com/images/logo.png" alt="My Store Logo" style="width: 160px; height: auto; margin: 0 auto; display: block;" />
+              <h2 style="color: #333; text-align: center;">Welcome to My Store!</h2>
               <p style="margin-left: 18px;">Dear ${user.name},</p>
-              <p>You have successfully logged in to your Dhicoins account using Facebook. Enjoy our services!</p>
-              <p>Best Regards,<br>Dhicoins Team</p>
+              <p>Welcome to My Store! You have successfully logged in to your account using Facebook. Start exploring our wide range of products and enjoy exclusive offers and a seamless shopping experience!</p>
+              <p>Best Regards,<br>My Store Team</p>
               <p style="color: #999; font-size: 12px; text-align: center; margin-top: 20px;">
                 If you did not request this, please ignore this email.
               </p>
               <p style="color: #999; font-size: 12px; text-align: center;">
-                &copy; ${new Date().getFullYear()} Dhicoins Exchange. All rights reserved.
+                &copy; ${new Date().getFullYear()} My Store. All rights reserved.
               </p>
             </div>
           `;
@@ -243,12 +240,10 @@ passport.use(
           console.log("No email available to send the login success email.");
         }
 
-        // Successfully authenticate the user
         return cb(null, user);
       } catch (error) {
         console.error("Error in FacebookStrategy:", error);
 
-        // Return error to the callback
         return cb(error, null);
       }
     }
