@@ -171,19 +171,19 @@ passport.use(
 passport.use(
   new FacebookStrategy(
     {
-      clientID: "1126230255556278", // Replace with your actual client ID
-      clientSecret: "27f95b19aa0d22b8029ea94d97b18d57", // Replace with your actual client secret
+      clientID: process.env.FACEBOOK_APP_ID,
+      clientSecret: process.env.FACEBOOK_SECRET,
       callbackURL:
-        "https://my-store-orpin-chi.vercel.app/auth/facebook/callback",
+        "https://my-store-kappa-nine.vercel.app/auth/facebook/callback",
       profileFields: ["id", "displayName", "email"],
       scope: ["public_profile", "email"],
     },
     async function (accessToken, refreshToken, profile, cb) {
       try {
         const email = profile.emails?.[0]?.value || null;
+
         console.log("Facebook Profile:", profile);
 
-        // Handle user creation or update
         let user = await User.findOne({
           accountId: profile.id,
           provider: "facebook",
@@ -191,6 +191,7 @@ passport.use(
 
         if (!user) {
           console.log("Adding new Facebook user to DB...");
+
           user = new User({
             accountId: profile.id,
             name: profile.displayName,
@@ -210,7 +211,6 @@ passport.use(
           }
         }
 
-        // Send welcome email if email is available
         if (email) {
           const emailSubject = "Welcome to My Store!";
           const emailText = `Dear ${user.name}, welcome to My Store! You have successfully logged in to your account using Facebook. Start exploring our exciting products and enjoy a seamless shopping experience!`;
@@ -240,10 +240,10 @@ passport.use(
           console.log("No email available to send the login success email.");
         }
 
-        // Return user information after authentication
         return cb(null, user);
       } catch (error) {
         console.error("Error in FacebookStrategy:", error);
+
         return cb(error, null);
       }
     }
