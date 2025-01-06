@@ -132,10 +132,10 @@ exports.googleAuth = async (req, res) => {
       expiresIn: process.env.JWT_TIMEOUT || "1h",
     });
 
-    res.cookie("jwt", token, {
-      expires: new Date(Date.now() + 3600000), 
+    res.cookie("jwt", user.token, {
+      expires: new Date(Date.now() + 3600000),
       httpOnly: true,
-      sameSite: "lax", 
+      sameSite: "lax",
     });
 
     return res.status(200).json({
