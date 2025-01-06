@@ -148,13 +148,27 @@ exports.googleAuth = async (req, res) => {
 };
 
 exports.facebookAuth = passport.authenticate("facebook", {
-  scope: ["public_profile", "email"], 
+  scope: ["public_profile", "email"],
 });
 
-exports.facebookCallback = passport.authenticate("facebook", {
-  failureRedirect: "https://my-store-kappa-nine.vercel.app/login",
-  successRedirect: "https://my-store-kappa-nine.vercel.app",
-});
+exports.facebookCallback = async (req, res, next) => {
+  passport.authenticate("facebook", (err, user, info) => {
+    if (err) {
+      console.error("Authentication error:", err);
+      return res
+        .status(500)
+        .redirect("https://my-store-kappa-nine.vercel.app/login");
+    }
+
+    if (!user) {
+      console.log("Authentication failed, no user found:", info);
+      return res.redirect("https://my-store-kappa-nine.vercel.app/login");
+    }
+
+    console.log("Authentication successful:", user);
+    return res.redirect("https://my-store-kappa-nine.vercel.app");
+  })(req, res, next);
+};
 
 exports.loginUser = async (req, res) => {
   try {
