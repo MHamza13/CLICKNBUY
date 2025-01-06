@@ -214,21 +214,7 @@ passport.use(
         if (email) {
           const emailSubject = "Welcome to My Store!";
           const emailText = `Dear ${user.name}, welcome to My Store! You have successfully logged in to your account using Facebook. Start exploring our exciting products and enjoy a seamless shopping experience!`;
-          const emailHTML = `
-            <div style="font-family: Arial, sans-serif; line-height: 1.6;">
-              <img src="https://my-store.com/images/logo.png" alt="My Store Logo" style="width: 160px; height: auto; margin: 0 auto; display: block;" />
-              <h2 style="color: #333; text-align: center;">Welcome to My Store!</h2>
-              <p style="margin-left: 18px;">Dear ${user.name},</p>
-              <p>Welcome to My Store! You have successfully logged in to your account using Facebook. Start exploring our wide range of products and enjoy exclusive offers and a seamless shopping experience!</p>
-              <p>Best Regards,<br>My Store Team</p>
-              <p style="color: #999; font-size: 12px; text-align: center; margin-top: 20px;">
-                If you did not request this, please ignore this email.
-              </p>
-              <p style="color: #999; font-size: 12px; text-align: center;">
-                &copy; ${new Date().getFullYear()} My Store. All rights reserved.
-              </p>
-            </div>
-          `;
+          const emailHTML = `...`; 
 
           try {
             await sendEmail(email, emailSubject, emailText, emailHTML);
@@ -242,9 +228,8 @@ passport.use(
 
         return cb(null, user);
       } catch (error) {
-        console.error("Error in FacebookStrategy:", error);
-
-        return cb(error, null);
+        console.error("Error in FacebookStrategy:", error); 
+        return cb(error, null); 
       }
     }
   )
