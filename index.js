@@ -78,7 +78,7 @@ server.post("/create-payment-intent", async (req, res) => {
 });
 
 // Webhook route for Strip
-
+ 
 server.post(
   "/webhook",
   express.raw({ type: "application/json" }),

@@ -138,20 +138,22 @@ exports.fetchProductById = async (req, res) => {
 exports.updateProduct = async (req, res) => {
   const { id } = req.params;
   try {
-    const product = await Product.findByIdAndUpdate(id, req.body, {
-      new: true,
-    });
+    const product = await Product.findById(id);
 
     if (!product) {
       return res.status(404).json({ message: "Product not found" });
     }
 
+    product.deleted = req.body.deleted !== undefined ? req.body.deleted : false;
+
+    Object.assign(product, req.body);
+
     product.discountedPrice = Math.round(
       product.price * (1 - (product.discountPercentage || 0) / 100)
     );
-    product.deleted = false;
 
     const updatedProduct = await product.save();
+
     res.status(200).json(updatedProduct);
   } catch (err) {
     console.error("Error updating product:", err);

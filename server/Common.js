@@ -26,7 +26,8 @@ exports.cookieExtractor = function (req) {
     console.log("Extracted JWT Token:", token);
   }
 
-  // token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3NzM5OGFiMDEwOWYyY2ZkNDE0NTYwMCIsInJvbGUiOiJ1c2VyIiwiaWF0IjoxNzM1NjI4OTk0fQ.ZjzBqoJFJdJ_Oko5vzhg-An7V6qrsMTEWH0OA8zMrek";
+  // token =
+    // "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3OTc1M2Q5MTk2MWY1Mzg0MWZlZTc3ZCIsInJvbGUiOiJ1c2VyIiwiaWF0IjoxNzM3OTcwNjY1fQ.v1V-Al9c5lvZzyP6ZSowyZOMfUEdcA6qE6n9LwC0LM4";
   return token;
 };
 
@@ -144,7 +145,7 @@ exports.invoiceTemplate = function (order) {
    }
    </style>
  </head>
- <body style="background-color: #fcb46c;">
+ <body style="background-color: #3484ac;">
    <!-- start preheader -->
    <div class="preheader" style="display: none; max-width: 0; max-height: 0; overflow: hidden; font-size: 1px; line-height: 1px; color: #fff; opacity: 0;">
      A preheader is the short summary text that follows the subject line when an email is viewed in the inbox.
@@ -154,7 +155,7 @@ exports.invoiceTemplate = function (order) {
    <table border="0" cellpadding="0" cellspacing="0" width="100%">
      <!-- start logo -->
      <tr>
-       <td align="center" bgcolor="#fcb46c">
+       <td align="center" bgcolor="#3484ac">
          <!--[if (gte mso 9)|(IE)]>
          <table align="center" border="0" cellpadding="0" cellspacing="0" width="600">
          <tr>
@@ -212,7 +213,7 @@ exports.invoiceTemplate = function (order) {
      <!-- end logo -->
      <!-- start hero -->
      <tr>
-       <td align="center" bgcolor="#fcb46c">
+       <td align="center" bgcolor="#3484ac">
          <!--[if (gte mso 9)|(IE)]>
          <table align="center" border="0" cellpadding="0" cellspacing="0" width="600">
          <tr>
@@ -235,7 +236,7 @@ exports.invoiceTemplate = function (order) {
      <!-- end hero -->
      <!-- start copy block -->
      <tr>
-       <td align="center" bgcolor="#fcb46c">
+       <td align="center" bgcolor="#3484ac">
          <!--[if (gte mso 9)|(IE)]>
          <table align="center" border="0" cellpadding="0" cellspacing="0" width="600">
          <tr>
@@ -254,9 +255,9 @@ exports.invoiceTemplate = function (order) {
              <td align="left" bgcolor="#ffffff" style="padding: 24px; font-family: 'Source Sans Pro', Helvetica, Arial, sans-serif; font-size: 16px; line-height: 24px;">
                <table border="0" cellpadding="0" cellspacing="0" width="100%">
                  <tr>
-                   <td align="left" bgcolor="#fcb46c" width="60%" style="padding: 12px;font-family: 'Source Sans Pro', Helvetica, Arial, sans-serif; font-size: 16px; line-height: 24px;"><strong>Order #</strong></td>
-                   <td align="left" bgcolor="#fcb46c" width="20%" style="padding: 12px;font-family: 'Source Sans Pro', Helvetica, Arial, sans-serif; font-size: 16px; line-height: 24px;"><strong></strong></td>
-                   <td align="left" bgcolor="#fcb46c" width="20%" style="padding: 12px;font-family: 'Source Sans Pro', Helvetica, Arial, sans-serif; font-size: 16px; line-height: 24px;"><strong>${
+                   <td align="left" bgcolor="#3484ac" width="60%" style="padding: 12px;font-family: 'Source Sans Pro', Helvetica, Arial, sans-serif; font-size: 16px; line-height: 24px;"><strong>Order #</strong></td>
+                   <td align="left" bgcolor="#3484ac" width="20%" style="padding: 12px;font-family: 'Source Sans Pro', Helvetica, Arial, sans-serif; font-size: 16px; line-height: 24px;"><strong></strong></td>
+                   <td align="left" bgcolor="#3484ac" width="20%" style="padding: 12px;font-family: 'Source Sans Pro', Helvetica, Arial, sans-serif; font-size: 16px; line-height: 24px;"><strong>${
                      order.id
                    }</strong></td>
                  </tr>
@@ -278,11 +279,11 @@ exports.invoiceTemplate = function (order) {
                 
                 
                  <tr>
-                   <td align="left" width="60%" style="padding: 12px; font-family: 'Source Sans Pro', Helvetica, Arial, sans-serif; font-size: 16px; line-height: 24px; border-top: 2px dashed #fcb46c; border-bottom: 2px dashed #fcb46c;"><strong>Total</strong></td>
-                   <td align="left" width="20%" style="padding: 12px; font-family: 'Source Sans Pro', Helvetica, Arial, sans-serif; font-size: 16px; line-height: 24px; border-top: 2px dashed #fcb46c; border-bottom: 2px dashed #fcb46c;"><strong>${
+                   <td align="left" width="60%" style="padding: 12px; font-family: 'Source Sans Pro', Helvetica, Arial, sans-serif; font-size: 16px; line-height: 24px; border-top: 2px dashed #3484ac; border-bottom: 2px dashed #3484ac;"><strong>Total</strong></td>
+                   <td align="left" width="20%" style="padding: 12px; font-family: 'Source Sans Pro', Helvetica, Arial, sans-serif; font-size: 16px; line-height: 24px; border-top: 2px dashed #3484ac; border-bottom: 2px dashed #3484ac;"><strong>${
                      order.totalItems
                    }</strong></td>
-                   <td align="left" width="20%" style="padding: 12px; font-family: 'Source Sans Pro', Helvetica, Arial, sans-serif; font-size: 16px; line-height: 24px; border-top: 2px dashed #fcb46c; border-bottom: 2px dashed #fcb46c;"><strong>$${
+                   <td align="left" width="20%" style="padding: 12px; font-family: 'Source Sans Pro', Helvetica, Arial, sans-serif; font-size: 16px; line-height: 24px; border-top: 2px dashed #3484ac; border-bottom: 2px dashed #3484ac;"><strong>$${
                      order.totalAmount
                    }</strong></td>
                  </tr>
@@ -301,7 +302,7 @@ exports.invoiceTemplate = function (order) {
      <!-- end copy block -->
      <!-- start receipt address block -->
      <tr>
-       <td align="center" bgcolor="#fcb46c" valign="top" width="100%">
+       <td align="center" bgcolor="#3484ac" valign="top" width="100%">
          <!--[if (gte mso 9)|(IE)]>
          <table align="center" border="0" cellpadding="0" cellspacing="0" width="600">
          <tr>
@@ -353,7 +354,7 @@ exports.invoiceTemplate = function (order) {
      <!-- end receipt address block -->
      <!-- start footer -->
      <tr>
-       <td align="center" bgcolor="#fcb46c" style="padding: 24px;">
+       <td align="center" bgcolor="#3484ac" style="padding: 24px;">
          <!--[if (gte mso 9)|(IE)]>
          <table align="center" border="0" cellpadding="0" cellspacing="0" width="600">
          <tr>
@@ -362,14 +363,14 @@ exports.invoiceTemplate = function (order) {
          <table border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 600px;">
            <!-- start permission -->
            <tr>
-             <td align="center" bgcolor="#fcb46c" style="padding: 12px 24px; font-family: 'Source Sans Pro', Helvetica, Arial, sans-serif; font-size: 14px; line-height: 20px; color: #666;">
+             <td align="center" bgcolor="#3484ac" style="padding: 12px 24px; font-family: 'Source Sans Pro', Helvetica, Arial, sans-serif; font-size: 14px; line-height: 20px; color: #666;">
                <p style="margin: 0;">You received this email because we received a request for [type_of_action] for your account. If you didn't request [type_of_action] you can safely delete this email.</p>
              </td>
            </tr>
            <!-- end permission -->
            <!-- start unsubscribe -->
            <tr>
-             <td align="center" bgcolor="#fcb46c" style="padding: 12px 24px; font-family: 'Source Sans Pro', Helvetica, Arial, sans-serif; font-size: 14px; line-height: 20px; color: #666;">
+             <td align="center" bgcolor="#3484ac" style="padding: 12px 24px; font-family: 'Source Sans Pro', Helvetica, Arial, sans-serif; font-size: 14px; line-height: 20px; color: #666;">
                <p style="margin: 0;">To stop receiving these emails, you can <a href="https://sendgrid.com" target="_blank">unsubscribe</a> at any time.</p>
                <p style="margin: 0;">Paste 1234 S. Broadway St. City, State 12345</p>
              </td>
