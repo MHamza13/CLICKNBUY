@@ -26,8 +26,43 @@ const productSchema = new mongoose.Schema({
     min: [0, "Stock must be at least 0"],
     default: 0,
   },
+  status: {
+    type: String,
+    default: "Active",
+  },
+  newarrivedproduct: {
+    type: String,
+    default: "Inactive",
+  },
+  trendingproduct: {
+    type: String,
+    default: "Inactive",
+  },
+  featuredproduct: {
+    type: String,
+    default: "Inactive",
+  },
+  weight: {
+    type: Number,
+    default: 0,
+  },
+  weightType: {
+    type: String,
+    default: "ml",
+  },
   brand: { type: String, required: true },
-  category: { type: String, required: true },
+  categories: [
+    {
+      type: String,
+      required: true,
+    },
+  ],
+  subcategories: [
+    {
+      type: String,
+      default: ["UnSubCategorized"],
+    },
+  ],
   colors: { type: [mongoose.Schema.Types.Mixed] },
   sizes: { type: [mongoose.Schema.Types.Mixed] },
   thumbnail: { type: String, required: true },

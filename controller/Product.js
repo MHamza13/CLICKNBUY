@@ -34,7 +34,7 @@ exports.createProduct = async (req, res) => {
       "description",
       "price",
       "brand",
-      "category",
+      "categories",
       "thumbnail",
     ];
     for (const field of requiredFields) {
@@ -88,11 +88,11 @@ exports.fetchAllProduct = async (req, res) => {
   let query = Product.find(condition);
   let totalProductsQuery = Product.find(condition);
 
-  // Apply category filter if provided
-  if (req.query.category) {
-    const categories = req.query.category.split(",");
-    query = query.where("category").in(categories);
-    totalProductsQuery = totalProductsQuery.where("category").in(categories);
+  // Apply categories filter if provided
+  if (req.query.categories) {
+    const categories = req.query.categories.split(",");
+    query = query.where("categories").in(categories);
+    totalProductsQuery = totalProductsQuery.where("categories").in(categories);
   }
 
   // Apply brand filter if provided

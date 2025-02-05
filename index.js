@@ -10,6 +10,7 @@ const authRouter = require("./routes/Auth");
 const cartRouter = require("./routes/Cart");
 const ordersRouter = require("./routes/Order");
 const contactRouter = require("./routes/contact");
+const subCategoriesRouter = require("./routes/SubCategory");
 const cors = require("cors");
 const session = require("express-session");
 const passport = require("passport");
@@ -55,6 +56,7 @@ server.use(express.static(path.resolve(__dirname, "dist")));
 // API routes
 server.use("/products", productRouter.router);
 server.use("/categories", categoriesRouter.router);
+server.use("/sub-categories", subCategoriesRouter.router);
 server.use("/brands", brandsRouter.router);
 server.use("/users", isAuth(), userRouter.router);
 server.use("/auth", authRouter.router);
