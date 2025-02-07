@@ -29,6 +29,7 @@
     "passport-jwt": "^4.0.1",
     "passport-local": "^1.0.0",
     "querystring": "^0.2.1",
+    "sanitize-html": "^2.14.0",
     "stripe": "^16.10.0"
   }
 }

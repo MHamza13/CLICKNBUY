@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const sanitizeHtml = require("sanitize-html");
 
 const productSchema = new mongoose.Schema({
   title: { type: String, required: true, unique: true },
@@ -63,9 +64,14 @@ const productSchema = new mongoose.Schema({
       default: ["UnSubCategorized"],
     },
   ],
-  colors: { type: [mongoose.Schema.Types.Mixed] },
-  sizes: { type: [mongoose.Schema.Types.Mixed] },
-  thumbnail: { type: String, required: true },
+  variants: [
+    {
+      name: { type: String },
+      value: { type: [String] },
+      _id: false,
+    },
+  ],
+  thumbnail: { type: [String], required: true },
   highlights: { type: [String] },
   images: [{ type: mongoose.Schema.Types.String, ref: "Image" }],
   discountedPrice: { type: Number },
@@ -78,6 +84,19 @@ productSchema.virtual("id").get(
   },
   { timestamps: true }
 );
+
+productSchema.pre("save", function (next) {
+  if (this.description) {
+    this.description = sanitizeHtml(this.description, {
+      allowedTags: sanitizeHtml.defaults.allowedTags.concat(["img", "iframe"]),
+      allowedAttributes: {
+        a: ["href", "name", "target"],
+        img: ["src", "alt"],
+      },
+    });
+  }
+  next();
+});
 
 productSchema.set("toJSON", {
   virtuals: true,
