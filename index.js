@@ -11,7 +11,8 @@ const cartRouter = require("./routes/Cart");
 const ordersRouter = require("./routes/Order");
 const contactRouter = require("./routes/contact");
 const subCategoriesRouter = require("./routes/SubCategory");
-const attributeRouter = require("./routes/Attribute");  
+const attributeRouter = require("./routes/Attribute");
+const wishlistRouter = require("./routes/WishList");
 const cors = require("cors");
 const session = require("express-session");
 const passport = require("passport");
@@ -63,6 +64,7 @@ server.use("/attributes", attributeRouter.router);
 server.use("/users", isAuth(), userRouter.router);
 server.use("/auth", authRouter.router);
 server.use("/carts", isAuth(), cartRouter.router);
+server.use("/wishlist", isAuth(), wishlistRouter.router);
 server.use("/orders", isAuth(), ordersRouter.router);
 server.use("/contact", isAuth(), contactRouter.router);
 
@@ -82,7 +84,7 @@ server.post("/create-payment-intent", async (req, res) => {
 });
 
 // Webhook route for Strip
- 
+
 server.post(
   "/webhook",
   express.raw({ type: "application/json" }),
@@ -218,7 +220,7 @@ passport.use(
         if (email) {
           const emailSubject = "Welcome to My Store!";
           const emailText = `Dear ${user.name}, welcome to My Store! You have successfully logged in to your account using Facebook. Start exploring our exciting products and enjoy a seamless shopping experience!`;
-          const emailHTML = `...`; 
+          const emailHTML = `...`;
 
           try {
             await sendEmail(email, emailSubject, emailText, emailHTML);
@@ -232,8 +234,8 @@ passport.use(
 
         return cb(null, user);
       } catch (error) {
-        console.error("Error in FacebookStrategy:", error); 
-        return cb(error, null); 
+        console.error("Error in FacebookStrategy:", error);
+        return cb(error, null);
       }
     }
   )
