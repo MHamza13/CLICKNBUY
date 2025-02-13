@@ -3,6 +3,7 @@ require("dotenv").config();
 require("./db/DbConnection");
 const server = express();
 const productRouter = require("./routes/Products");
+const ratingRoutes = require("./routes/Ratting");
 const brandsRouter = require("./routes/Brand");
 const categoriesRouter = require("./routes/Category");
 const userRouter = require("./routes/User");
@@ -57,6 +58,7 @@ server.use(express.static(path.resolve(__dirname, "dist")));
 
 // API routes
 server.use("/products", productRouter.router);
+server.use("/ratings", ratingRoutes.router);
 server.use("/categories", categoriesRouter.router);
 server.use("/sub-categories", subCategoriesRouter.router);
 server.use("/brands", brandsRouter.router);
