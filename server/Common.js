@@ -1,15 +1,12 @@
 const passport = require("passport");
 const nodemailer = require("nodemailer");
-const { google } = require("googleapis");
 
-const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID;
-const GOOGLE_CLIENT_SECERET = process.env.GOOGLE_CLIENT_SECERET;
+const GOOGLE_CLIENT_ID =
+  "289465848111-fgpo5o38e6acg3gkdeajfvcbp0d9g2ou.apps.googleusercontent.com";
+const GOOGLE_CLIENT_SECRET = "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";
+const REDIRECT_URI = "http://localhost:8080/auth/google/callback";
 
-exports.oauth2Client = new google.auth.OAuth2(
-  GOOGLE_CLIENT_ID,
-  GOOGLE_CLIENT_SECERET,
-  "postmessage"
-);
+
 
 exports.isAuth = (req, res, done) => {
   return passport.authenticate("jwt");
@@ -25,6 +22,9 @@ exports.cookieExtractor = function (req) {
     token = req.cookies["jwt"];
     console.log("Extracted JWT Token:", token);
   }
+
+  // token =
+  // "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3OTc1M2Q5MTk2MWY1Mzg0MWZlZTc3ZCIsInJvbGUiOiJ1c2VyIiwiaWF0IjoxNzM3OTcwNjY1fQ.v1V-Al9c5lvZzyP6ZSowyZOMfUEdcA6qE6n9LwC0LM4";
 
   return token;
 };
