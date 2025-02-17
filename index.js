@@ -28,6 +28,7 @@ const path = require("path");
 const bodyParser = require("body-parser");
 const FacebookStrategy = require("passport-facebook").Strategy;
 const sendEmail = require("./server/Common");
+const GoogleStrategy = require("passport-google-oauth20").Strategy;
 
 // Stripe setup
 const stripe = require("stripe")(process.env.STRIPE_SERVER_KRY);
@@ -36,8 +37,13 @@ const stripe = require("stripe")(process.env.STRIPE_SERVER_KRY);
 server.use(express.json({ limit: "10mb" }));
 server.use(bodyParser.urlencoded({ limit: "100mb", extended: true }));
 server.use(cookieParser());
-server.use(cors({ exposedHeaders: ["X-Total-Count"] }));
-server.use(express.urlencoded({ extended: true })); // Parse form data
+server.use(
+  cors({
+    exposedHeaders: ["X-Total-Count"],
+    methods: ["GET", "POST", "PUT", "DELETE"],
+  })
+);
+server.use(express.urlencoded({ extended: true }));
 server.use(bodyParser.json());
 
 // Session setup
@@ -169,6 +175,50 @@ passport.use(
         }
       } catch (err) {
         return done(err, false);
+      }
+    }
+  )
+);
+
+// Passport Google strategies
+
+passport.use(
+  new GoogleStrategy(
+    {
+      clientID: process.env.GOOGLE_CLIENT_ID,
+      clientSecret: process.env.GOOGLE_CLIENT_SECERET,
+      callbackURL:
+        process.env.GOOGLE_REDIRECT_URI ||
+        "http://localhost:8080/auth/google/callback",
+      passReqToCallback: true,
+    },
+    async (request, accessToken, refreshToken, profile, done) => {
+      try {
+        let user = await User.findOne({ email: profile.emails[0].value });
+
+        if (!user) {
+          user = await User.create({
+            name: profile.displayName,
+            email: profile.emails[0].value,
+            profileImage: profile.photos[0].value,
+            emailVerified: true,
+            provider: "google",
+          });
+        }
+
+        const jwtSecret = process.env.JWT_SECRET_KEY || "default_secret_key";
+        const token = jwt.sign(
+          { _id: user._id, email: user.email },
+          jwtSecret,
+          {
+            expiresIn: process.env.JWT_TIMEOUT || "1h",
+          }
+        );
+
+        return done(null, { user, token });
+      } catch (error) {
+        console.error("Error during Google OAuth:", error);
+        return done(error, null);
       }
     }
   )

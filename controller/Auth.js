@@ -128,9 +128,7 @@ exports.googleAuth = async (req, res) => {
     }
 
     const jwtSecret = process.env.JWT_SECRET_KEY || "default_secret_key";
-    const token = jwt.sign({ _id: user._id, email }, jwtSecret, {
-      expiresIn: process.env.JWT_TIMEOUT || "1h",  
-    });
+    const token = jwt.sign(sanitizaUser(user), process.env.JWT_SECRET_KEY);
 
     res.cookie("jwt", token, {
       expires: new Date(Date.now() + 3600000),
