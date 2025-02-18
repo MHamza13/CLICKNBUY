@@ -127,7 +127,6 @@ exports.googleAuth = async (req, res) => {
       });
     }
 
-    const jwtSecret = process.env.JWT_SECRET_KEY || "default_secret_key";
     const token = jwt.sign(sanitizaUser(user), process.env.JWT_SECRET_KEY);
 
     res.cookie("jwt", token, {
