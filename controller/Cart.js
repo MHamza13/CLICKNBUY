@@ -27,10 +27,22 @@ exports.deleteFromCart = async (req, res) => {
   const { id } = req.params;
   try {
     const doc = await Cart.findByIdAndDelete(id);
-
-    res.status(200).json(result);
+    if (!doc) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Item not found" });
+    }
+    res
+      .status(200)
+      .json({
+        success: true,
+        message: "Item deleted successfully",
+        deletedItem: doc,
+      });
   } catch (err) {
-    res.status(400).json(err);
+    res
+      .status(500)
+      .json({ success: false, message: "Server error", error: err.message });
   }
 };
 
